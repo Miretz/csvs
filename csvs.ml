@@ -42,8 +42,10 @@ let split_by sep x = String.split ~on:sep x
 
 (* Match substring in string *)
 let match_in s1 s2 =
-	let len1 = String.length s1
-	and len2 = String.length s2 in
+	let s1 = String.lowercase s1 and
+	s2 = String.lowercase s2 and
+	len1 = String.length s1	and
+	len2 = String.length s2 in
 	if len1 < len2 then false else
 		let rec aux i =
       			if i < 0 then false else
@@ -78,5 +80,5 @@ let () =
 			[] in
 	let lst = build_list ic 0 in
 	match lst with    
-		| [] -> Stdio.print_endline("Value not found.\n")
+		| [] | _::[] -> Stdio.print_endline ("Value not found.\n")
 		| hd::tl -> Stdio.print_endline (render_table hd tl ^ "\n")
