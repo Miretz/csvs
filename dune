@@ -1,0 +1,3 @@
+(executable
+	(name csvs)
+	(libraries base stdio))
