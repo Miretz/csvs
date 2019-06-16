@@ -11,5 +11,8 @@ csvs file separator search_string
 
 ## Build:
 ```bash
-dune build csvs
+dune build csvs.exe
 ```
+
+How to setup dev environment:
+https://dev.realworldocaml.org/install.html
