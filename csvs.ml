@@ -36,9 +36,13 @@ let render_table header rows =
                  :: List.map rows ~f:(fun row -> render_row row widths)
                 )
 
-(* Split string by separator *)
-let split_by sep x = String.split ~on:sep x 
+(* Regex pattern to ignore quoted strings *)
+let unquoted_pat = {|"[^"]*"(*SKIP)(*F)||}
 
+(* Split string by separator *)
+let split_by sep x = 
+	let pattern = unquoted_pat ^ sep in
+	Pcre.split ~pat:pattern x
 
 (* Match substring in string *)
 let match_in s1 s2 =
@@ -61,10 +65,10 @@ let () =
 	(* Parse cmd arguments *)
 	if (Array.length Sys.argv) <> 4 then print_usage () else
 	let file = Sys.argv.(1) in
-	let sep = String.get Sys.argv.(2) 0 in
+	let sep = Sys.argv.(2) in
 	let search = Sys.argv.(3) in
 
-	(* Read file *)
+	(* Process file *)
 	let ic = In_channel.create file in
 	let rec build_list infile idx =	
 		try
@@ -73,10 +77,11 @@ let () =
 				split_by sep line 
 				else [] in
 			match splitted with
-			| [] -> build_list infile (Int.succ idx)
+			| [] -> build_list infile (idx)
 			| _  -> splitted :: build_list infile (Int.succ idx)     			
   		with End_of_file ->
   			In_channel.close infile;
+			Stdio.print_endline ("Entries found: " ^ Int.to_string (Int.pred idx) ^"\n");
 			[] in
 	let lst = build_list ic 0 in
 	match lst with    
