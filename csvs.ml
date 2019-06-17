@@ -37,7 +37,7 @@ let render_table header rows =
                 )
 
 (* Regex pattern to ignore quoted strings *)
-let unquoted_pat = {|"[^"]*"(*SKIP)(*F)||}
+let unquoted_pat = "\"[^\"]*\"(*SKIP)(*F)|"
 
 (* Split string by separator *)
 let split_by sep x = 
@@ -58,32 +58,39 @@ let match_in s1 s2 =
     	in
     	aux (len1 - len2)
 
+(* Prints the usage of the program *)
 let print_usage () =
-	Stdio.print_endline("Usage: csvs file separator search_string\n")
+	Stdio.print_endline("Usage: csvs file separator [search_string]\n")
 
-let () =
-	(* Parse cmd arguments *)
-	if (Array.length Sys.argv) <> 4 then print_usage () else
-	let file = Sys.argv.(1) in
-	let sep = Sys.argv.(2) in
-	let search = Sys.argv.(3) in
-
-	(* Process file *)
-	let ic = In_channel.create file in
-	let rec build_list infile idx =	
+(* Read and process the file line by line *)
+let build_list sep search infile =	
+	let rec build_list_inner lst =
 		try
   			let line = In_channel.input_line_exn infile in
-			let splitted = if idx = 0 || match_in line search then 
+			let splitted = if List.length lst = 0 || match_in line search then 
 				split_by sep line 
 				else [] in
 			match splitted with
-			| [] -> build_list infile (idx)
-			| _  -> splitted :: build_list infile (Int.succ idx)     			
+			| [] -> build_list_inner lst
+			| _  -> build_list_inner (splitted::lst)     			
   		with End_of_file ->
   			In_channel.close infile;
-			Stdio.print_endline ("Entries found: " ^ Int.to_string (Int.pred idx) ^"\n");
-			[] in
-	let lst = build_list ic 0 in
+			List.rev lst in
+	build_list_inner []
+
+(* Main function *)
+let () =
+	(* Parse cmd arguments *)
+	let arg_len = Array.length Sys.argv in
+	if arg_len < 3 || arg_len > 4 then print_usage () else
+	let file = Sys.argv.(1) in
+	let sep = Sys.argv.(2) in
+	let search = if arg_len = 4 then Sys.argv.(3) else "" in
+
+	(* Process file *)
+	let ic = In_channel.create file in
+	let lst = build_list sep search ic in
+	Stdio.print_endline ("Entries found: " ^ Int.to_string ((List.length lst)-1) ^"\n");
 	match lst with    
 		| [] | _::[] -> Stdio.print_endline ("Value not found.\n")
 		| hd::tl -> Stdio.print_endline (render_table hd tl ^ "\n")
