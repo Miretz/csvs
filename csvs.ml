@@ -63,10 +63,11 @@ let print_usage () =
 	Stdio.print_endline("Usage: csvs file separator [search_string]\n")
 
 (* Read and process the file line by line *)
-let build_list sep search infile =	
+let build_list sep search file =	
+	let ic = In_channel.create file in
 	let rec build_list_inner lst =
 		try
-  			let line = In_channel.input_line_exn infile in
+  			let line = In_channel.input_line_exn ic in
 			let splitted = if List.length lst = 0 || match_in line search then 
 				split_by sep line 
 				else [] in
@@ -74,7 +75,7 @@ let build_list sep search infile =
 			| [] -> build_list_inner lst
 			| _  -> build_list_inner (splitted::lst)     			
   		with End_of_file ->
-  			In_channel.close infile;
+  			In_channel.close ic;
 			List.rev lst in
 	build_list_inner []
 
@@ -88,8 +89,7 @@ let () =
 	let search = if arg_len = 4 then Sys.argv.(3) else "" in
 
 	(* Process file *)
-	let ic = In_channel.create file in
-	let lst = build_list sep search ic in
+	let lst = build_list sep search file in
 	Stdio.print_endline ("Entries found: " ^ Int.to_string ((List.length lst)-1) ^"\n");
 	match lst with    
 		| [] | _::[] -> Stdio.print_endline ("Value not found.\n")
