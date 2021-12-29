@@ -20,7 +20,19 @@ eval $(opam env)
 dune build csvs.exe
 ```
 
-## Usage:
+## Run:
+
+### Example search in the included test.csv:
 ```bash
-./csvs.exe file separator [search_string]
+./_build/default/csvs.exe test.csv , Jav
+```
+
+Output:
+```bash
+Entries found: 2
+
+| Language   | Fun | Difficulty |
+|____________+_____+____________|
+| Java       | 5   | 4          |
+| JavaScript | 6   | 4          |
 ```
