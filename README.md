@@ -1,6 +1,6 @@
 # csvs
 
-Tool for searching in CSV files written in OCaml
+Command Line tool written in OCaml for searching rows in CSV files.
 
 <img src="screenshot.png" />
 
