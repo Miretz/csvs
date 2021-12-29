@@ -98,15 +98,15 @@ let read_cmd_args argv =
 	let arg_len = Array.length argv in
 	if arg_len < 3 || arg_len > 4 then Arguments_Missing else
 	Arguments {
-		file=Sys.argv.(1); 
-		sep=Sys.argv.(2); 
-		search=if arg_len = 4 then Sys.argv.(3) else "";
+		file=argv.(1); 
+		sep=argv.(2); 
+		search=if arg_len = 4 then argv.(3) else "";
 	}
 
 
 (* Main function *)
 let () =
-	let args = read_cmd_args Sys.argv in
+	let args = read_cmd_args (Sys.get_argv()) in
 	match args with
 	| Arguments_Missing -> print_usage ()
 	| Arguments args ->
