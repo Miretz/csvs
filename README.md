@@ -4,15 +4,23 @@ Command Line tool written in OCaml for displaying and searching in CSV files.
 
 <img src="screenshot.png" />
 
-## Usage:
+## Build:
+
+### How to setup dev environment:
+https://dev.realworldocaml.org/install.html
+
+### Install required dependencies:
 ```bash
-csvs file separator [search_string]
+opam install base utop stdio pcre
+eval $(opam env)
 ```
 
-## Build:
+### Build executable using Dune:
 ```bash
 dune build csvs.exe
 ```
 
-How to setup dev environment:
-https://dev.realworldocaml.org/install.html
+## Usage:
+```bash
+./csvs.exe file separator [search_string]
+```
