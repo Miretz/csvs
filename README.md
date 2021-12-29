@@ -6,7 +6,7 @@ Command Line tool written in OCaml for searching rows in CSV files.
 
 ## Usage:
 ```bash
-csvs file separator search_string
+csvs file separator [search_string]
 ```
 
 ## Build:
